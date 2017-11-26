@@ -4,6 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 Base = declarative_base()
 
@@ -18,6 +19,16 @@ class User(Base):
     username = Column(String, nullable=True)
     chat_id = Column(Integer, nullable=False)
     questions = relationship('Question', backref='user')
+
+
+# class Answerer(Base):
+#     id = Column(Integer, primary_key=True)
+#     created_at = Column(DateTime, default=datetime.datetime.utcnow)
+#     first_name = Column(String, nullable=True)
+#     last_name = Column(String, nullable=True)
+#     username = Column(String, nullable=True)
+#     chat_id = Column(Integer, nullable=False)
+#     questions = relationship('Question', backref='answerer')
 
 
 class Admin(Base):
@@ -53,5 +64,20 @@ class Answer(Base):
     answerer_id = Column(Integer, ForeignKey(Admin.id))
 
 
-engine = create_engine('sqlite:///database00.db')
+engine = create_engine('sqlite:///database.db')
 Base.metadata.create_all(engine)
+DBSession = sessionmaker(bind=engine)
+DBSession.bind = engine
+
+
+def get_session():
+    session = DBSession()
+    return session
+
+# me = 69643054
+
+# admin1 = Admin(first_name="hadi", last_name="shamgholi", username="hadishamgholi", chat_id=me)
+# session.add(admin1)
+# session.commit()
+
+# print(session.query(Admin).first().username)
